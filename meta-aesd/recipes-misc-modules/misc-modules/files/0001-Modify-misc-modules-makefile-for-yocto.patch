@@ -1,0 +1,64 @@
+From fb752bd1fd06b3d6bb0956a735e6413615925af0 Mon Sep 17 00:00:00 2001
+From: Fernando Becerra Tanaka <fernando.becerratanaka@coloradu.edu>
+Date: Sun, 9 Feb 2025 10:14:37 -0600
+Subject: [PATCH] Modify misc-modules makefile for yocto
+
+---
+ misc-modules/Makefile | 33 +++++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
+
+diff --git a/misc-modules/Makefile b/misc-modules/Makefile
+index f4e6e34..dbf8e1d 100644
+--- a/misc-modules/Makefile
++++ b/misc-modules/Makefile
+@@ -8,29 +8,38 @@
+ LDDINC=$(PWD)/../include
+ EXTRA_CFLAGS += -I$(LDDINC)
+ 
+-ifeq ($(KERNELRELEASE),)
++# called from kernel build system: just declare what our modules are
++obj-m := hello.o hellop.o seq.o jiq.o sleepy.o complete.o \
++            silly.o faulty.o kdatasize.o kdataalign.o jit.o
+ 
+-    # Assume the source tree is where the running kernel was built
+-    # You should set KERNELDIR in the environment if it's elsewhere
+-    KERNELDIR ?= /lib/modules/$(shell uname -r)/build
+-    # The current directory is passed to sub-makes as argument
+-    PWD := $(shell pwd)
++# Assume the source tree is where the running kernel was built
++# You should set KERNELDIR in the environment if it's elsewhere
++KERNELDIR ?= /lib/modules/$(shell uname -r)/build
++# The current directory is passed to sub-makes as argument
++PWD := $(shell pwd)
++
++all:
++	$(MAKE) -C $(KERNEL_SRC) M=$(PWD) modules
+ 
+ modules:
+ 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
+ 
+ modules_install:
+-	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules_install
++	$(MAKE) -C $(KERNEL_SRC) M=$(PWD) modules_install
+ 
+ clean:
+ 	rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions *.mod modules.order *.symvers
+ 
+-.PHONY: modules modules_install clean
+ 
+-else
+-    # called from kernel build system: just declare what our modules are
+-    obj-m := hello.o hellop.o seq.o jiq.o sleepy.o complete.o \
+-             silly.o faulty.o kdatasize.o kdataalign.o jit.o
++depend .depend dep:
++	$(CC) $(EXTRA_CFLAGS) -M *.c > .depend
++
++
++ifeq (.depend,$(wildcard .depend))
++include .depend
+ endif
+ 
+ 
++
++
++
