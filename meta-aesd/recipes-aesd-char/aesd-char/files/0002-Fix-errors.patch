@@ -1,0 +1,51 @@
+From 18b5df04201a1bd0a4d7bcdcb0853870c7debc9f Mon Sep 17 00:00:00 2001
+From: Fernando Becerra Tanaka <fernando.becerratanaka@coloradu.edu>
+Date: Mon, 10 Feb 2025 19:05:49 -0600
+Subject: [PATCH] Fix errors
+
+---
+ aesd-char-driver/aesd-circular-buffer.c | 5 ++---
+ aesd-char-driver/main.c                 | 7 ++++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/aesd-char-driver/aesd-circular-buffer.c b/aesd-char-driver/aesd-circular-buffer.c
+index bf7d3b7..b6a5df3 100644
+--- a/aesd-char-driver/aesd-circular-buffer.c
++++ b/aesd-char-driver/aesd-circular-buffer.c
+@@ -43,9 +43,8 @@ struct aesd_buffer_entry *aesd_circular_buffer_find_entry_offset_for_fpos(
+     int total_entries_visited = 0; // To track the number of entries visited
+ 
+     // Start looking for the specified character offset in the buffer
+-    for (int seek_off = buffer->out_offs; 
+-         total_entries_visited < AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED; 
+-         total_entries_visited++, seek_off = (seek_off + 1) % AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED) 
++    int seek_off;
++    for (seek_off = buffer->out_offs; total_entries_visited < AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED; total_entries_visited++, seek_off = (seek_off + 1) % AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED) 
+     {
+         size_t entry_size = buffer->entry[seek_off].size;
+ 
+diff --git a/aesd-char-driver/main.c b/aesd-char-driver/main.c
+index 4d40783..055f1ef 100644
+--- a/aesd-char-driver/main.c
++++ b/aesd-char-driver/main.c
+@@ -120,7 +120,8 @@ loff_t aesd_llseek(struct file *filp,loff_t offset,int whence)
+                 PDEBUG("Error: Unable to do mutex lock");
+                 goto exit;
+             }
+-            for(int i= dev->buffer.out_offs; i!=dev->buffer.in_offs;)
++            int i;
++            for(i= dev->buffer.out_offs; i!=dev->buffer.in_offs;)
+             {
+                 total_length +=dev->buffer.entry[i].size;
+                 i = (i+1)%AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED;
+@@ -190,8 +191,8 @@ long aesd_unlocked_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+         ret_value = -ERESTART;
+         goto exit;
+     }
+-
+-    for(int i=dev->buffer.out_offs;i!=seek_params.write_cmd;)
++    int i;
++    for(i=dev->buffer.out_offs;i!=seek_params.write_cmd;)
+     {
+         total_length+=dev->buffer.entry[i].size;
+         i = (i+1)%AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED;

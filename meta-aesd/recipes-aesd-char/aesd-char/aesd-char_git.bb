@@ -4,11 +4,12 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 SRC_URI = "gitsm://git@github.com/cu-ecen-aeld/assignments-3-and-later-fbt-cu.git;protocol=ssh;branch=main \
            file://0001-Update-makefile.patch \
+           file://0002-Fix-errors.patch \
            "
 
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
-SRCREV = "4c9e264855532b4aba5b505255c6d5df21c95d3a"
+SRCREV = "77e55c427987e3abb98c8f40e681ad62c4ec9276"
 
 S = "${WORKDIR}/git"
 
