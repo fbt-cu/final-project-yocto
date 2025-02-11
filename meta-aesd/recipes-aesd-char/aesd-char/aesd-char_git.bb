@@ -3,15 +3,14 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 SRC_URI = "gitsm://git@github.com/cu-ecen-aeld/assignments-3-and-later-fbt-cu.git;protocol=ssh;branch=main \
-            file://aesd-char-driver_init \
-            file://aesdchar_load \
-            file://aesdchar_unload "
+           file://0001-Update-makefile.patch \
+           "
 
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
 SRCREV = "4c9e264855532b4aba5b505255c6d5df21c95d3a"
 
-S = "${WORKDIR}/git/aesd-char-driver"
+S = "${WORKDIR}/git"
 
 inherit module
 
