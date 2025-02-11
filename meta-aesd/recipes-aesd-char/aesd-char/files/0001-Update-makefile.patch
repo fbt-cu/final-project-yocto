@@ -1,0 +1,29 @@
+From ca0c19baea07a0b5ad1a774132dd63006cbd89c6 Mon Sep 17 00:00:00 2001
+From: Fernando Becerra Tanaka <fernando.becerratanaka@coloradu.edu>
+Date: Mon, 10 Feb 2025 18:28:23 -0600
+Subject: [PATCH] Update makefile
+
+---
+ aesd-char-driver/Makefile | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/aesd-char-driver/Makefile b/aesd-char-driver/Makefile
+index e4cd5ca..a73faef 100644
+--- a/aesd-char-driver/Makefile
++++ b/aesd-char-driver/Makefile
+@@ -20,9 +20,15 @@ else
+ KERNELDIR ?= /lib/modules/$(shell uname -r)/build
+ PWD       := $(shell pwd)
+ 
++all:
++	$(MAKE) -C $(KERNEL_SRC) M=$(PWD) modules
++
+ modules:
+ 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
+ 
++modules_install:
++	$(MAKE) -C $(KERNEL_SRC) M=$(PWD) modules_install
++
+ endif
+ 
+ clean:
